@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Blackboard Game (1–100)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Blackboard Game</h1>
+    <p class="tagline">Numbers 1–100 • First move must be an <strong>even</strong> number • Then move by ×prime or ÷prime</p>
+  </header>
+
+  <main class="app-main">
+    <section class="controls">
+      <div class="mode">
+        <label for="modeSelect">Mode:</label>
+        <select id="modeSelect">
+          <option value="pvp" selected>2 Players (same device)</option>
+          <option value="cpu">Vs Computer</option>
+        </select>
+      </div>
+
+      <div class="turn">
+        <span id="turnBadge" class="badge">Player 1’s turn</span>
+        <span id="circledInfo" class="circled">No number circled yet</span>
+      </div>
+
+      <div class="buttons">
+        <button id="newGameBtn" class="btn primary">New Game</button>
+        <button id="showRulesBtn" class="btn">Rules</button>
+      </div>
+    </section>
+
+    <section id="board" class="board" aria-label="Number board (1 to 100)">
+      <!-- Number cells injected by JS -->
+    </section>
+
+    <section class="panel">
+      <details id="rulesBox">
+        <summary>Game Rules</summary>
+        <ol>
+          <li>Numbers 1 to 100 are on the board.</li>
+          <li><strong>Player 1</strong> starts by choosing <strong>any even number</strong> and circles it.</li>
+          <li>On each subsequent move, choose a number that equals the currently circled number
+              <strong>multiplied by a prime</strong> or <strong>divided by a prime</strong> (must remain an integer). The number must still be on the board.</li>
+          <li>After choosing, the <em>previously circled</em> number is erased from the board, and the new one becomes circled.</li>
+          <li>If you have no valid move on your turn, you lose.</li>
+        </ol>
+        <p class="fineprint">Rules derived from the original problem statement.  [oai_citation:1‡B.pdf](sediment://file_00000000b1487208bf34cc3b2fb700ee)</p>
+      </details>
+
+      <div class="log">
+        <h3>Move Log</h3>
+        <ol id="logList" class="log-list"></ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small>Built for your spec • Fully client-side • No dependencies</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

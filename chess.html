@@ -6,10 +6,11 @@
   <title>Chess</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Toolbar */
+    /* Toolbar with Turn Indicator */
     .toolbar {
       display: flex;
       justify-content: center;
+      align-items: center;
       flex-wrap: wrap;
       gap: 16px;
       padding: 14px;
@@ -35,18 +36,17 @@
     }
     .toolbar button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Turn badge */
+    /* Turn Indicator inside toolbar */
     .turn-indicator {
-      display: inline-block;
       background: #222637;
-      padding: 8px 22px;
+      padding: 10px 26px;
       border-radius: 30px;
       color: #fff;
       font-weight: 600;
       font-size: 1rem;
-      margin: 10px auto;
       text-align: center;
       transition: 0.3s;
+      box-shadow: 0 0 15px rgba(255,255,255,0.05);
     }
     .turn-white { box-shadow: 0 0 12px rgba(255,255,255,0.6); }
     .turn-black { box-shadow: 0 0 12px rgba(0,0,0,0.8); background: #111318; }
@@ -95,7 +95,7 @@
       overflow-y: auto;
     }
 
-    /* Chess board */
+    /* Chess Board */
     .chess-board {
       display: grid;
       grid-template-columns: repeat(8, minmax(55px, 8vw));
@@ -135,14 +135,12 @@
   <h1>Chess</h1>
 </header>
 
+<!-- Unified toolbar -->
 <section class="toolbar">
   <button id="undoBtn">⏪ Undo</button>
   <button id="redoBtn">⏩ Redo</button>
   <button id="flipBtn">🔄 Flip Board</button>
   <button id="newBtn">♻️ New Game</button>
-</section>
-
-<section class="status-bar" style="flex-direction:column;text-align:center;">
   <span id="turnBadge" class="turn-indicator turn-white">White to move</span>
 </section>
 
@@ -174,7 +172,7 @@
   </div>
 </main>
 
-<footer class="footer">♟ Chess • Chess.com Inspired • Responsive Layout • Captures Left • Move Log Right</footer>
+<footer class="footer">♟ Chess • Chess.com Inspired • Responsive Layout • Turn Indicator on Top</footer>
 <script src="chess.js"></script>
 </body>
 </html>

@@ -134,3 +134,36 @@ body{
 .panel{background:var(--panel);border-radius:10px;padding:12px;}
 .log ol{list-style:decimal inside;max-height:300px;overflow-y:auto;}
 .log li{margin:4px 0;color:#d0d3dc;}
+
+
+/* ===== Connect 4 ===== */
+.connect-container {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.connect-board {
+  background:#11141d;
+  border-radius:14px;
+  padding:10px;
+  display:grid;
+  justify-content:center;
+}
+
+.slot {
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:#222637;
+  border:2px solid #2a3046;
+  cursor:pointer;
+  transition:.1s;
+}
+.slot:hover {
+  transform:translateY(-3px);
+}
+.slot.red { background:#ff3d3d; }
+.slot.yellow { background:#ffd93d; }
+

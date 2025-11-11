@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chess</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="header">
+  <button class="back-btn" onclick="location.href='index.html'">← Back</button>
+  <h1>Chess</h1>
+</header>
+
+<section class="status-bar">
+  <span id="turnBadge">White to move</span>
+  <span id="infoBadge"></span>
+</section>
+
+<main class="chess-wrap">
+  <div id="board" class="chess-board"></div>
+</main>
+
+<footer class="footer">Chess • Legal moves, checks, <b>castling</b>, auto-queen promotion</footer>
+<script src="chess.js"></script>
+</body>
+</html>

@@ -6,244 +6,75 @@
   <title>Chess</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    :root {
-      --panel: #171923;
-      --muted: #a7adbb;
+    :root{
+      --panel:#171923; --muted:#a7adbb;
+      /* ✅ Two-green Chess.com-like palette (the one you approved) */
+      --sq-light:#769656;  /* lighter green */
+      --sq-dark:#4a7039;   /* deeper green */
     }
 
-    body {
-      background: #0f1115;
-      color: #fff;
-      font-family: system-ui, sans-serif;
-      overflow-x: hidden;
-      margin: 0;
-    }
+    body{background:#0f1115;color:#fff;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;overflow-x:hidden}
 
     /* Header */
-    .header {
-      text-align: center;
-      padding: 12px;
-      border-bottom: 1px solid #222;
-      position: relative;
+    .header{position:relative;text-align:center;padding:12px;border-bottom:1px solid #222}
+    .back-btn{position:absolute;left:15px;top:15px;background:#222637;color:#fff;border:0;border-radius:8px;padding:6px 10px;cursor:pointer}
+    .back-btn:hover{filter:brightness(1.1)}
+
+    /* Toolbar with centered turn badge */
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 20px;background:#14161f;border-bottom:1px solid #222}
+    .toolbar-group{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}
+    .toolbar button{
+      background:linear-gradient(145deg,#222637,#181b28);color:#fff;border:1px solid #2a3046;border-radius:12px;
+      padding:12px 22px;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s;min-width:110px
+    }
+    .toolbar button:hover{filter:brightness(1.15);transform:translateY(-2px)}
+    .toolbar button:disabled{opacity:.5;cursor:not-allowed}
+    .turn-indicator{background:#222637;padding:10px 26px;border-radius:30px;color:#fff;font-weight:700}
+    .turn-white{box-shadow:0 0 12px rgba(255,255,255,.55)}
+    .turn-black{background:#111318;box-shadow:0 0 12px rgba(0,0,0,.85)}
+
+    /* Main layout */
+    .game-layout{display:flex;justify-content:center;align-items:flex-start;gap:22px;padding:20px;flex-wrap:wrap}
+    .sidebar-left,.sidebar-right{display:flex;flex-direction:column;gap:14px;width:200px}
+    .capture-panel,.moves-panel{background:var(--panel);border:1px solid #2a3046;border-radius:12px;padding:10px;color:#e0e3ea}
+    .capture-panel h3,.moves-panel h3{text-align:center;font-size:14px;color:var(--muted);margin-bottom:6px;letter-spacing:.5px}
+    .capture-panel div{text-align:center;font-size:22px;min-height:30px}
+    .moves-panel ol{padding-left:20px;font-size:15px;max-height:420px;overflow:auto;margin:0}
+
+    /* Board wrapper: prevents mobile cropping */
+    .chess-wrap{display:flex;justify-content:center;align-items:center;width:100%;max-width:100vw;overflow:hidden}
+    .chess-board{
+      display:grid;grid-template-columns:repeat(8,1fr);
+      width:min(92vw,520px);aspect-ratio:1/1; /* responsive & square */
+      border:4px solid #2a3046;border-radius:12px;box-shadow:0 0 15px rgba(0,0,0,.7);
+      user-select:none;font-size:calc(min(92vw,520px)/8*.8);max-height:90vh
     }
 
-    .back-btn {
-      position: absolute;
-      left: 15px;
-      top: 15px;
-      background: #222637;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 6px 10px;
-      cursor: pointer;
+    /* Squares + highlights */
+    .square{display:flex;justify-content:center;align-items:center;transition:.08s;color:#fff}
+    .square.light{background:var(--sq-light)}
+    .square.dark{background:var(--sq-dark)}
+    .square:hover{filter:brightness(1.06)}
+    .square.highlight{box-shadow:inset 0 0 0 3px rgba(0,255,100,.6)}
+    .square.capture-highlight{box-shadow:inset 0 0 0 3px rgba(255,80,80,.85)}
+    .square.selected{box-shadow:0 0 14px rgba(80,255,120,.8)}
+
+    /* Piece visibility */
+    .square[title^="b"]{color:#0b0b0b;text-shadow:0 0 3px #fff8,0 0 6px #fff3}
+    .square[title^="w"]{color:#f6f7f8;text-shadow:0 0 2px #0007,0 0 5px #0005}
+
+    /* Mobile */
+    @media (max-width:900px){
+      .toolbar{flex-direction:column;align-items:center}
+      .game-layout{flex-direction:column;align-items:center}
+      .sidebar-left,.sidebar-right{flex-direction:row;gap:10px;width:100%;max-width:95vw}
+      .moves-panel{max-height:220px;width:100%}
+      .capture-panel{flex:1}
+      .chess-wrap{overflow-y:auto;max-height:90vh}
+      footer{font-size:12px}
     }
 
-    .back-btn:hover {
-      filter: brightness(1.1);
-    }
-
-    /* Toolbar layout */
-    .toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding: 12px 20px;
-      background: #14161f;
-      border-bottom: 1px solid #222;
-    }
-
-    .toolbar-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-    }
-
-    .toolbar button {
-      background: linear-gradient(145deg, #222637, #181b28);
-      color: #fff;
-      border: 1px solid #2a3046;
-      border-radius: 10px;
-      padding: 10px 20px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .toolbar button:hover {
-      filter: brightness(1.15);
-      transform: translateY(-2px);
-    }
-
-    .turn-indicator {
-      background: #222637;
-      padding: 8px 20px;
-      border-radius: 30px;
-      color: #fff;
-      font-weight: 600;
-      font-size: 1rem;
-      text-align: center;
-      min-width: 130px;
-    }
-
-    .turn-white { box-shadow: 0 0 12px rgba(255,255,255,0.6); }
-    .turn-black { box-shadow: 0 0 12px rgba(0,0,0,0.8); background: #111318; }
-
-    /* Layout */
-    .game-layout {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 20px;
-      padding: 20px;
-      flex-wrap: wrap;
-    }
-
-    .sidebar-left, .sidebar-right {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      width: 180px;
-    }
-
-    .capture-panel, .moves-panel {
-      background: var(--panel);
-      border: 1px solid #2a3046;
-      border-radius: 12px;
-      padding: 10px;
-      color: #e0e3ea;
-    }
-
-    .capture-panel h3, .moves-panel h3 {
-      text-align: center;
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
-
-    .capture-panel div {
-      text-align: center;
-      font-size: 22px;
-      min-height: 30px;
-    }
-
-    .moves-panel ol {
-      padding-left: 20px;
-      font-size: 15px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    /* 🎨 Chess.com Green Theme + Mobile Fix */
-    .chess-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      max-width: 100vw;
-      overflow: hidden;
-      height: auto;
-    }
-
-    .chess-board {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      width: min(90vw, 480px);
-      aspect-ratio: 1/1;
-      border: 4px solid #2a3046;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.7);
-      user-select: none;
-      font-size: calc(min(90vw, 480px) / 8 * 0.8);
-      max-height: 90vh; /* ensures visibility on phones */
-    }
-
-    .square {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: 0.1s;
-      color: #fff;
-    }
-
-    /* ✅ Authentic Chess.com Colors */
-    .square.light {
-      background: #baca44; /* greenish-light */
-    }
-
-    .square.dark {
-      background: #769656; /* deep forest green */
-    }
-
-    .square:hover { filter: brightness(1.1); }
-
-    .square.highlight { box-shadow: inset 0 0 0 3px rgba(0,255,100,0.6); }
-    .square.capture-highlight { box-shadow: inset 0 0 0 3px rgba(255,80,80,0.8); }
-    .square.selected { box-shadow: 0 0 15px rgba(80,255,120,0.8); }
-
-    /* ♟ Piece visibility fix */
-    .square[title^="b"] {
-      color: #000;
-      text-shadow: 0 0 3px #fff, 0 0 6px rgba(255,255,255,0.3);
-    }
-
-    .square[title^="w"] {
-      color: #fefefe;
-      text-shadow: 0 0 2px #000, 0 0 5px rgba(0,0,0,0.4);
-    }
-
-    /* Mobile responsive layout */
-    @media (max-width: 900px) {
-      .toolbar {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .game-layout {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .sidebar-left, .sidebar-right {
-        flex-direction: row;
-        justify-content: center;
-        gap: 10px;
-        width: 100%;
-        max-width: 95vw;
-      }
-
-      .moves-panel {
-        max-height: 200px;
-        width: 100%;
-      }
-
-      .capture-panel {
-        flex: 1;
-        text-align: center;
-      }
-
-      .chess-wrap {
-        overflow-y: auto;
-        max-height: 90vh;
-      }
-
-      footer {
-        font-size: 12px;
-      }
-    }
-
-    footer {
-      text-align: center;
-      padding: 10px;
-      color: #888;
-      border-top: 1px solid #222;
-      font-size: 14px;
-    }
+    footer{text-align:center;padding:10px;color:#888;border-top:1px solid #222;font-size:14px}
   </style>
 </head>
 <body>
@@ -252,6 +83,7 @@
     <h1>Chess</h1>
   </header>
 
+  <!-- Symmetric toolbar: left buttons • centered turn • right buttons -->
   <section class="toolbar">
     <div class="toolbar-group">
       <button id="undoBtn">⏪ Undo</button>
@@ -265,22 +97,18 @@
   </section>
 
   <main class="game-layout">
+    <!-- Captures on the left -->
     <div class="sidebar-left">
-      <div class="capture-panel">
-        <h3>Black Captures</h3>
-        <div id="lostBlack"></div>
-      </div>
-
-      <div class="capture-panel">
-        <h3>White Captures</h3>
-        <div id="lostWhite"></div>
-      </div>
+      <div class="capture-panel"><h3>Black Captures</h3><div id="lostBlack"></div></div>
+      <div class="capture-panel"><h3>White Captures</h3><div id="lostWhite"></div></div>
     </div>
 
+    <!-- Board -->
     <div class="chess-wrap">
       <div id="board" class="chess-board"></div>
     </div>
 
+    <!-- Move list on the right -->
     <div class="sidebar-right">
       <div class="moves-panel">
         <h3>Move List</h3>
@@ -289,8 +117,7 @@
     </div>
   </main>
 
-  <footer>♟ Chess • Classic Chess.com Green • Responsive • Stable UI</footer>
-
+  <footer>♟ Chess • Two-Green Chess.com Look • Fully Responsive • No Cropping</footer>
   <script src="chess.js"></script>
 </body>
 </html>

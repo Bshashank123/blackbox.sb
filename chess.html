@@ -35,7 +35,7 @@
     }
     .toolbar button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Status bar */
+    /* Turn badge */
     .turn-indicator {
       display: inline-block;
       background: #222637;
@@ -51,7 +51,7 @@
     .turn-white { box-shadow: 0 0 12px rgba(255,255,255,0.6); }
     .turn-black { box-shadow: 0 0 12px rgba(0,0,0,0.8); background: #111318; }
 
-    /* Layout: board + sidebar (captures & moves) */
+    /* Layout */
     .game-layout {
       display: flex;
       justify-content: center;
@@ -61,7 +61,7 @@
       flex-wrap: wrap;
     }
 
-    .right-sidebar {
+    .sidebar-left, .sidebar-right {
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -75,7 +75,6 @@
       padding: 10px;
       color: #e0e3ea;
     }
-
     .capture-panel h3, .moves-panel h3 {
       text-align: center;
       font-size: 15px;
@@ -84,13 +83,11 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-
     .capture-panel div {
       text-align: center;
       font-size: 22px;
       min-height: 30px;
     }
-
     .moves-panel ol {
       padding-left: 20px;
       font-size: 15px;
@@ -109,6 +106,7 @@
       user-select: none;
       font-size: clamp(32px, 6vw, 56px);
     }
+
     .square {
       display: flex;
       justify-content: center;
@@ -122,13 +120,11 @@
     .square.highlight { box-shadow: inset 0 0 0 3px rgba(0,255,100,0.6); }
     .square.capture-highlight { box-shadow: inset 0 0 0 3px rgba(255,80,80,0.8); }
     .square.selected { box-shadow: 0 0 15px rgba(80,255,120,0.8); }
-
-    /* Black pieces brightened */
     .square[title^="b"] { filter: brightness(1.4) contrast(1.1); color: #111; }
 
     @media (max-width: 950px) {
       .game-layout { flex-direction: column; align-items: center; }
-      .right-sidebar { flex-direction: row; width: auto; gap: 10px; }
+      .sidebar-left, .sidebar-right { flex-direction: row; width: auto; gap: 10px; }
       .moves-panel { max-height: 200px; }
     }
   </style>
@@ -151,13 +147,8 @@
 </section>
 
 <main class="game-layout">
-  <!-- Center Chess Board -->
-  <div class="chess-wrap" style="justify-content:center;">
-    <div id="board" class="chess-board"></div>
-  </div>
-
-  <!-- Sidebar -->
-  <div class="right-sidebar">
+  <!-- Left Sidebar (captures) -->
+  <div class="sidebar-left">
     <div class="capture-panel">
       <h3>Black Captures</h3>
       <div id="lostBlack"></div>
@@ -167,7 +158,15 @@
       <h3>White Captures</h3>
       <div id="lostWhite"></div>
     </div>
+  </div>
 
+  <!-- Chess Board -->
+  <div class="chess-wrap" style="justify-content:center;">
+    <div id="board" class="chess-board"></div>
+  </div>
+
+  <!-- Right Sidebar (moves) -->
+  <div class="sidebar-right">
     <div class="moves-panel">
       <h3>Move List</h3>
       <ol id="moveList"></ol>
@@ -175,7 +174,7 @@
   </div>
 </main>
 
-<footer class="footer">♟ Chess • Chess.com Inspired • Responsive Layout • Captures • Move Log • Highlights</footer>
+<footer class="footer">♟ Chess • Chess.com Inspired • Responsive Layout • Captures Left • Move Log Right</footer>
 <script src="chess.js"></script>
 </body>
 </html>

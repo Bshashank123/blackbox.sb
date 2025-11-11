@@ -1,55 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blackboard Game (3 Players)</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Game Hub</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="header">
-    <h1>🧮 Blackboard Game</h1>
-    <p>Pick numbers 1–100 • Start with an even number • Then move by × or ÷ a prime</p>
+    <h1>🎮 Game Hub</h1>
+    <p>Select a game to play</p>
   </header>
 
-  <section class="controls">
-    <label>Players:
-      <select id="playerCountSelect">
-        <option value="2">2 Players</option>
-        <option value="3" selected>3 Players</option>
-      </select>
-    </label>
-    <button id="newGameBtn">🔁 New Game</button>
-  </section>
+  <main class="hub">
+    <div class="game-card" onclick="location.href='blackboard.html'">
+      <h2>🧮 Blackboard Game</h2>
+      <p>Circle numbers by multiplying or dividing by primes. Supports 2–3 players.</p>
+      <button>Play Now</button>
+    </div>
 
-  <section class="status-bar">
-    <span id="turnBadge">Player 1’s turn</span>
-    <span id="circledInfo">No number circled yet</span>
-  </section>
-
-  <main class="container">
-    <div id="board" class="board"></div>
-
-    <aside class="panel">
-      <details open>
-        <summary>📜 Rules</summary>
-        <ol>
-          <li>Numbers 1–100 are on the board.</li>
-          <li>Player 1 starts by choosing an <strong>even number</strong>.</li>
-          <li>Next moves = current number × prime or ÷ prime (integer ≤ 100).</li>
-          <li>Previous circled number is erased each turn.</li>
-          <li>If a player has no valid move → they lose.</li>
-        </ol>
-      </details>
-
-      <div class="log">
-        <h3>Move Log</h3>
-        <ol id="logList"></ol>
-      </div>
-    </aside>
+    <!-- Example for adding another game -->
+    <div class="game-card coming-soon">
+      <h2>🕹️ Coming Soon</h2>
+      <p>New games will appear here!</p>
+    </div>
   </main>
 
-  <footer class="footer">3-Player Version • No dependencies</footer>
-  <script src="script.js"></script>
+  <footer class="footer">
+    <small>© 2025 Game Hub | Made by You</small>
+  </footer>
 </body>
 </html>

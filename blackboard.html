@@ -2,52 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blackboard Game</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="header">
-    <h1>🧮 Blackboard Game</h1>
-    <button class="back-btn" onclick="location.href='index.html'">← Back to Game Hub</button>
-  </header>
+<header class="header">
+  <button class="back-btn" onclick="location.href='index.html'">← Back to Game Hub</button>
+  <h1>Blackboard Game</h1>
+</header>
 
-  <section class="controls">
-    <label>Players:
-      <select id="playerCountSelect">
-        <option value="2">2 Players</option>
-        <option value="3" selected>3 Players</option>
-      </select>
-    </label>
-    <button id="newGameBtn">🔁 New Game</button>
-  </section>
+<section class="controls">
+  <label>Mode:
+    <select id="modeSelect">
+      <option value="pvp2">2 Players</option>
+      <option value="pvp3">3 Players</option>
+      <option value="bot" selected>Vs Bot</option>
+    </select>
+  </label>
+  <button id="newGameBtn">🔁 New Game</button>
+</section>
 
-  <section class="status-bar">
-    <span id="turnBadge">Player 1’s turn</span>
-    <span id="circledInfo">No number circled yet</span>
-  </section>
+<section class="status-bar">
+  <span id="turnBadge">Player 1’s turn</span>
+  <span id="circledInfo">No number circled yet</span>
+</section>
 
-  <main class="container">
-    <div id="board" class="board"></div>
-    <aside class="panel">
-      <details open>
-        <summary>📜 Rules</summary>
-        <ol>
-          <li>Numbers 1–100 are on the board.</li>
-          <li>Player 1 starts by choosing an <strong>even</strong> number.</li>
-          <li>Next moves = multiply or divide by a prime (1–100 range only).</li>
-          <li>The previously circled number is erased.</li>
-          <li>If you cannot move, you lose.</li>
-        </ol>
-      </details>
-      <div class="log">
-        <h3>Move Log</h3>
-        <ol id="logList"></ol>
-      </div>
-    </aside>
-  </main>
+<main class="container">
+  <div id="board" class="board" aria-label="Number board (1 to 100)"></div>
 
-  <footer class="footer">3-Player Version • No dependencies</footer>
-  <script src="blackboard.js"></script>
+  <aside class="panel">
+    <details open>
+      <summary>📜 Rules</summary>
+      <ol>
+        <li>Numbers 1–100 are on the board.</li>
+        <li>Player 1 starts by choosing an <b>even</b> number.</li>
+        <li>Next moves = multiply or divide by a prime (result must stay 1–100).</li>
+        <li>The previously circled number is erased.</li>
+        <li>If you cannot move, you lose.</li>
+      </ol>
+    </details>
+    <div class="log">
+      <h3>Move Log</h3>
+      <ol id="logList" class="log-list"></ol>
+    </div>
+  </aside>
+</main>
+
+<footer class="footer">Blackboard • 2–3 Players • Bot mode</footer>
+<script src="blackboard.js"></script>
 </body>
 </html>

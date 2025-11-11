@@ -1,193 +1,180 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chess</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    /* Toolbar (larger, softer buttons) */
-    .toolbar {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      padding: 14px;
-      background: #14161f;
-      border-bottom: 1px solid #222;
-    }
-    .toolbar button {
-      background: linear-gradient(145deg, #222637, #181b28);
-      color: #fff;
-      border: 1px solid #2a3046;
-      border-radius: 12px;
-      padding: 12px 22px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.25s;
-      font-weight: 600;
-    }
-    .toolbar button:hover {
-      filter: brightness(1.2);
-      transform: translateY(-2px);
-      box-shadow: 0 0 10px rgba(100, 255, 100, 0.3);
-    }
-    .toolbar button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+const boardEl = document.getElementById('board');
+const turnBadge = document.getElementById('turnBadge');
+const undoBtn = document.getElementById('undoBtn');
+const redoBtn = document.getElementById('redoBtn');
+const flipBtn = document.getElementById('flipBtn');
+const newBtn = document.getElementById('newBtn');
+const moveListEl = document.getElementById('moveList');
+const lostWhiteEl = document.getElementById('lostWhite');
+const lostBlackEl = document.getElementById('lostBlack');
 
-    /* Layout grid: Captures – Board – Move List */
-    .game-layout {
-      display: grid;
-      grid-template-columns: 120px 1fr 200px;
-      gap: 16px;
-      padding: 18px;
-    }
-    @media (max-width:950px){
-      .game-layout {
-        grid-template-columns: 1fr;
-        justify-items: center;
+let flipped = false;
+let lostWhite = [], lostBlack = [];
+let history = [], future = [];
+
+const glyph = {
+  wK:'♔', wQ:'♕', wR:'♖', wB:'♗', wN:'♘', wP:'♙',
+  bK:'♚', bQ:'♛', bR:'♜', bB:'♝', bN:'♞', bP:'♟'
+};
+
+let board, turn, selected, legalTargets;
+
+function newGame() {
+  board = [
+    ['bR','bN','bB','bQ','bK','bB','bN','bR'],
+    ['bP','bP','bP','bP','bP','bP','bP','bP'],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    ['wP','wP','wP','wP','wP','wP','wP','wP'],
+    ['wR','wN','wB','wQ','wK','wB','wN','wR']
+  ];
+  turn = 'w'; selected = null; legalTargets = [];
+  lostWhite = []; lostBlack = [];
+  history = []; future = [];
+  render();
+}
+
+function render() {
+  boardEl.innerHTML = '';
+  const ranks = flipped ? [...Array(8).keys()] : [...Array(8).keys()].reverse();
+  const files = flipped ? [...Array(8).keys()].reverse() : [...Array(8).keys()];
+
+  for (const r of ranks) {
+    for (const c of files) {
+      const sq = document.createElement('div');
+      sq.className = 'square ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
+      sq.dataset.r = r; sq.dataset.c = c;
+
+      const piece = board[r][c];
+      if (piece) {
+        sq.textContent = glyph[piece];
+        sq.title = piece; // used to brighten black pieces
       }
+
+      if (selected && selected.r === r && selected.c === c)
+        sq.classList.add('selected');
+
+      const target = legalTargets.find(t => t.r === r && t.c === c);
+      if (target) {
+        if (board[r][c] && board[r][c][0] !== turn)
+          sq.classList.add('capture-highlight');
+        else sq.classList.add('highlight');
+      }
+
+      sq.addEventListener('click', onSquareClick);
+      boardEl.appendChild(sq);
     }
+  }
 
-    /* Captured pieces panel */
-    .capture-panel {
-      background: var(--panel);
-      border: 1px solid #2a3046;
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
-      font-size: 24px;
-      min-height: 120px;
-      color: #fff;
-    }
-    .capture-panel h3 {
-      font-size: 15px;
-      color: var(--muted);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+  const colorName = turn === 'w' ? 'White' : 'Black';
+  turnBadge.textContent = colorName + ' to move';
+  turnBadge.className = 'turn-indicator ' + (turn === 'w' ? 'turn-white' : 'turn-black');
 
-    /* Move list panel */
-    .moves-panel {
-      background: var(--panel);
-      border: 1px solid #2a3046;
-      border-radius: 12px;
-      padding: 10px;
-      max-height: 460px;
-      overflow: auto;
-      color: #e0e3ea;
-    }
-    .moves-panel h3 {
-      text-align: center;
-      margin-bottom: 6px;
-    }
-    .moves-panel ol {
-      padding-left: 20px;
-      font-size: 15px;
-    }
+  lostWhiteEl.innerHTML = lostWhite.map(x => glyph[x]).join(' ');
+  lostBlackEl.innerHTML = lostBlack.map(x => glyph[x]).join(' ');
+}
 
-    /* Turn indicator */
-    .turn-indicator {
-      display: inline-block;
-      background: #222637;
-      padding: 8px 22px;
-      border-radius: 30px;
-      color: #fff;
-      font-weight: 600;
-      font-size: 1rem;
-      margin: 8px auto;
-      text-align: center;
-      transition: 0.3s;
-    }
-    .turn-white { box-shadow: 0 0 12px rgba(255,255,255,0.6); }
-    .turn-black { box-shadow: 0 0 12px rgba(0,0,0,0.8); background: #111318; }
+/* ----------------- Movement Logic ----------------- */
+function onSquareClick(e) {
+  const r = +e.currentTarget.dataset.r, c = +e.currentTarget.dataset.c;
+  const piece = board[r][c];
+  const target = legalTargets.find(t => t.r === r && t.c === c);
 
-    /* Board styling */
-    .chess-board {
-      display: grid;
-      grid-template-columns: repeat(8, minmax(40px, 9vw));
-      grid-template-rows: repeat(8, minmax(40px, 9vw));
-      border: 4px solid #2a3046;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.7);
-      overflow: hidden;
-      user-select: none;
-      font-size: clamp(28px, 5vw, 48px);
-    }
+  if (selected && target) {
+    makeMove(selected.r, selected.c, r, c);
+    selected = null;
+    legalTargets = [];
+    render();
+    return;
+  }
 
-    .square {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: 0.1s;
-    }
+  if (piece && piece[0] === turn) {
+    selected = { r, c };
+    legalTargets = generateMoves(r, c);
+    render();
+  } else {
+    selected = null;
+    legalTargets = [];
+    render();
+  }
+}
 
-    .square.light { background: #769656; }   /* Green squares (Chess.com style) */
-    .square.dark { background: #4a7039; }
+function generateMoves(r, c) {
+  const p = board[r][c]; if (!p) return [];
+  const color = p[0], type = p[1];
+  const M = [];
+  const add = (rr, cc) => { if (onBoard(rr, cc) && !friendly(rr, cc, color)) M.push({ r: rr, c: cc }); };
+  const slide = dirs => { for (const [dr, dc] of dirs) {
+    let rr = r + dr, cc = c + dc;
+    while (onBoard(rr, cc) && !friendly(rr, cc, color)) {
+      M.push({ r: rr, c: cc }); if (board[rr][cc]) break; rr += dr; cc += dc;
+    }}};
 
-    .square:hover { filter: brightness(1.1); }
+  if (type === 'P') {
+    const dir = color === 'w' ? -1 : 1, start = color === 'w' ? 6 : 1;
+    if (!board[r + dir][c]) add(r + dir, c);
+    if (r === start && !board[r + dir][c] && !board[r + 2 * dir][c]) add(r + 2 * dir, c);
+    for (const dc of [-1, 1]) if (onBoard(r + dir, c + dc) && enemy(r + dir, c + dc, color)) add(r + dir, c + dc);
+  }
+  if (type === 'N') [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(([dr,dc])=>add(r+dr,c+dc));
+  if (type === 'B') slide([[1,1],[1,-1],[-1,1],[-1,-1]]);
+  if (type === 'R') slide([[1,0],[-1,0],[0,1],[0,-1]]);
+  if (type === 'Q') slide([[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]);
+  if (type === 'K') for (const dr of [-1,0,1]) for (const dc of [-1,0,1]) if (dr||dc) add(r+dr,c+dc);
+  return M;
+}
 
-    /* Highlights */
-    .square.highlight {
-      box-shadow: inset 0 0 0 3px rgba(0,255,100,0.6);
-    }
-    .square.capture-highlight {
-      box-shadow: inset 0 0 0 3px rgba(255,80,80,0.8);
-    }
-    .square.selected {
-      box-shadow: 0 0 15px rgba(80,255,120,0.8);
-    }
+function onBoard(r,c){return r>=0&&r<8&&c>=0&&c<8;}
+function friendly(r,c,color){return board[r][c]&&board[r][c][0]===color;}
+function enemy(r,c,color){return board[r][c]&&board[r][c][0]!==color;}
 
-    /* Piece visibility (bright black pieces) */
-    .square[title^="b"] {
-      filter: brightness(1.4) contrast(1.1);
-      color: #000;
-    }
-  </style>
-</head>
-<body>
-<header class="header">
-  <button class="back-btn" onclick="location.href='index.html'">← Back</button>
-  <h1>Chess</h1>
-</header>
+function makeMove(r1,c1,r2,c2) {
+  const piece = board[r1][c1], captured = board[r2][c2];
+  if (captured) {
+    if (captured[0] === 'w') lostWhite.push(captured);
+    else lostBlack.push(captured);
+  }
 
-<section class="toolbar">
-  <button id="undoBtn">⏪ Undo</button>
-  <button id="redoBtn">⏩ Redo</button>
-  <button id="flipBtn">🔄 Flip Board</button>
-  <button id="newBtn">♻️ New Game</button>
-</section>
+  const snapshot = JSON.parse(JSON.stringify(board));
+  history.push(snapshot); future = [];
+  board[r2][c2] = piece;
+  board[r1][c1] = null;
 
-<section class="status-bar" style="flex-direction:column;text-align:center;">
-  <span id="turnBadge" class="turn-indicator turn-white">White to move</span>
-  <span id="infoBadge"></span>
-</section>
+  // promotion
+  if (piece === 'wP' && r2 === 0) board[r2][c2] = 'wQ';
+  if (piece === 'bP' && r2 === 7) board[r2][c2] = 'bQ';
 
-<main class="game-layout">
-  <div class="capture-panel">
-    <h3>Black Captures</h3>
-    <div id="lostBlack"></div>
-  </div>
+  turn = turn === 'w' ? 'b' : 'w';
+  updateMoveList(piece, r1, c1, r2, c2);
+}
 
-  <div class="chess-wrap" style="justify-content:center;">
-    <div id="board" class="chess-board"></div>
-  </div>
+function updateMoveList(p, r1, c1, r2, c2) {
+  const files = 'abcdefgh', ranks = '87654321';
+  const move = glyph[p] + ' ' + files[c1] + ranks[r1] + ' → ' + files[c2] + ranks[r2];
+  const li = document.createElement('li');
+  li.textContent = move;
+  moveListEl.appendChild(li);
+  moveListEl.scrollTop = moveListEl.scrollHeight;
+}
 
-  <div class="moves-panel">
-    <h3>Move List</h3>
-    <ol id="moveList"></ol>
-  </div>
-</main>
+/* Undo / Redo / Flip / New */
+undoBtn.onclick = () => {
+  if (!history.length) return;
+  const snap = history.pop();
+  future.push(JSON.parse(JSON.stringify(board)));
+  board = snap; turn = turn === 'w' ? 'b' : 'w';
+  render();
+};
+redoBtn.onclick = () => {
+  if (!future.length) return;
+  const snap = future.pop();
+  history.push(JSON.parse(JSON.stringify(board)));
+  board = snap; turn = turn === 'w' ? 'b' : 'w';
+  render();
+};
+flipBtn.onclick = () => { flipped = !flipped; render(); };
+newBtn.onclick = newGame;
 
-<div class="capture-panel">
-  <h3>White Captures</h3>
-  <div id="lostWhite"></div>
-</div>
-
-<footer class="footer">♟ Chess • Chess.com inspired UI • Undo / Redo • Captures • Highlights • Flip Board</footer>
-<script src="chess.js"></script>
-</body>
-</html>
+document.addEventListener('DOMContentLoaded', render);

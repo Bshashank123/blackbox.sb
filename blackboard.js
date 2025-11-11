@@ -1,64 +1,130 @@
-const byId=id=>document.getElementById(id);
-const PRIMES=(()=>{const a=Array(101).fill(true);a[0]=a[1]=false;
-for(let i=2;i*i<=100;i++)if(a[i])for(let j=i*i;j<=100;j+=i)a[j]=false;
-return a.map((v,i)=>v?i:null).filter(Boolean)})();
+const byId = (id) => document.getElementById(id);
+const PRIMES = (() => {
+  const a = Array(101).fill(true); a[0]=a[1]=false;
+  for (let i=2;i*i<=100;i++) if (a[i]) for (let j=i*i;j<=100;j+=i) a[j]=false;
+  return a.map((v,i)=>v?i:null).filter(Boolean);
+})();
 
-const state={numbers:[],current:null,player:1,count:3};
-const board=byId("board"),turn=byId("turnBadge"),info=byId("circledInfo"),
-logList=byId("logList"),btn=byId("newGameBtn"),sel=byId("playerCountSelect");
+const state = {
+  numbers: [], current: null, player: 1, mode: "bot", players: 2, moveCount: 0
+};
+
+const boardEl = byId("board"), turnBadge = byId("turnBadge"),
+      circledInfo = byId("circledInfo"), logList = byId("logList"),
+      newGameBtn = byId("newGameBtn"), modeSelect = byId("modeSelect");
 
 function newGame(){
-  state.count=+sel.value;state.player=1;state.current=null;
-  state.numbers=Array.from({length:100},(_,i)=>({v:i+1,erased:false,circled:false}));
-  board.innerHTML="";logList.innerHTML="";
-  for(let i=1;i<=100;i++){const b=document.createElement("button");
-    b.className="cell";b.textContent=i;b.dataset.v=i;b.onclick=()=>onClick(i);
-    board.appendChild(b);}
+  state.mode = modeSelect.value;
+  state.players = state.mode === "pvp3" ? 3 : 2;
+  state.player = 1; state.current = null; state.moveCount = 0;
+  state.numbers = Array.from({length:100},(_,i)=>({v:i+1, erased:false, circled:false}));
+  boardEl.innerHTML=""; logList.innerHTML=""; circledInfo.textContent="No number circled yet";
+
+  for(let i=1;i<=100;i++){
+    const b = document.createElement("button");
+    b.className="cell"; b.textContent=i; b.dataset.v=i;
+    b.onclick = () => onClick(i);
+    boardEl.appendChild(b);
+  }
   updateUI();
 }
-function updateUI(){
-  turn.textContent=`Player ${state.player}’s turn`;
-  info.textContent=state.current?`Circled: ${state.current}`:"No number circled yet";
-  highlight();
+
+function getBtn(v){return boardEl.querySelector(`[data-v="${v}"]`)}
+function isFree(v){const o=state.numbers[v-1]; return o && !o.erased && !o.circled}
+
+function validMoves(from){
+  if(from==null) return [];
+  const set=new Set();
+  for(const p of PRIMES){
+    const m=from*p, d=from/p;
+    if(m<=100 && isFree(m)) set.add(m);
+    if(Number.isInteger(d) && d>=1 && isFree(d)) set.add(d);
+  }
+  set.delete(from);
+  return [...set].sort((a,b)=>a-b);
 }
+
 function highlight(){
-  const valids=state.current===null?Array.from({length:50},(_,i)=>(i+1)*2):validMoves(state.current);
-  board.querySelectorAll(".cell").forEach(b=>{
-    const v=+b.dataset.v,o=state.numbers[v-1];
-    b.disabled=o.erased; b.classList.remove("valid");
-    if(!o.erased&&valids.includes(v)) b.classList.add("valid");
+  const valids = state.current===null ? Array.from({length:50},(_,i)=>(i+1)*2) : validMoves(state.current);
+  boardEl.querySelectorAll(".cell").forEach(b=>{
+    const v=+b.dataset.v, o=state.numbers[v-1];
+    b.disabled = o.erased || (state.current===null ? v%2!==0 : !valids.includes(v));
+    b.classList.toggle("valid", !b.disabled && !o.erased);
   });
 }
-function validMoves(c){
-  const res=[];for(const p of PRIMES){
-    const m=c*p,d=c/p;
-    if(m<=100&&isFree(m))res.push(m);
-    if(Number.isInteger(d)&&d>=1&&isFree(d))res.push(d);
-  }return[...new Set(res)];
+
+function markCircled(v, yes){
+  state.numbers[v-1].circled = yes;
+  getBtn(v).classList.toggle("circled", yes);
+  circledInfo.textContent = yes ? `Circled: ${v}` : "No number circled yet";
 }
-function isFree(v){const o=state.numbers[v-1];return o&&!o.erased&&!o.circled;}
+function erase(v){
+  state.numbers[v-1].erased = true;
+  const el=getBtn(v); el.classList.add("erased"); el.disabled=true; el.classList.remove("valid","circled");
+}
+
+function log(msg){ const li=document.createElement("li"); li.textContent=msg; logList.appendChild(li); logList.scrollTop=logList.scrollHeight; }
+
+function updateTurn(){
+  const who = state.mode==="bot" && state.player===2 ? "Bot" : `Player ${state.player}`;
+  turnBadge.textContent = `${who}’s turn`;
+}
+
+function switchPlayer(){
+  state.player++; if(state.player>state.players) state.player=1;
+  updateTurn();
+}
+
+function updateUI(){ updateTurn(); highlight(); }
+
 function onClick(v){
   if(state.current===null){
-    if(v%2!==0)return;circle(v);log(`P1 starts with ${v}`);next();
-  }else{
-    const from=state.current;if(!validMoves(from).includes(v))return;
-    erase(from);unCircle(from);circle(v);log(`P${state.player} moved ${from} → ${v}`);next();
+    if(v%2!==0) return;
+    state.current = v; markCircled(v, true); state.moveCount++; log(`P1 starts with ${v}`);
+    switchPlayer(); postMove(); if(state.mode==="bot" && state.player===2) setTimeout(botTurn, 420);
+    return;
+  }
+  const from=state.current; const valids=validMoves(from); if(!valids.includes(v)) return;
+
+  erase(from); markCircled(from,false);
+  state.current = v; markCircled(v,true); state.moveCount++;
+  const who = state.mode==="bot" && state.player===2 ? "Bot" : `P${state.player}`;
+  log(`${who} moved ${from} → ${v}`);
+
+  switchPlayer(); postMove(); if(state.mode==="bot" && state.player===2) setTimeout(botTurn, 420);
+}
+
+function postMove(){
+  highlight();
+  const vm = validMoves(state.current);
+  if(vm.length===0){
+    const loser = state.mode==="bot" && state.player===2 ? "Bot" : `Player ${state.player}`;
+    const winner = loser==="Bot" ? "Player 1" :
+                   (state.player===1 ? (state.mode==="bot"?"Bot":"Player "+(state.players)) : `Player ${state.player-1}`);
+    turnBadge.textContent = `${winner} wins! 🎉`;
+    log(`No moves for ${loser}. ${winner} wins!`);
+    boardEl.querySelectorAll(".cell").forEach(b=>b.disabled=true);
   }
 }
-function circle(v){state.current=v;state.numbers[v-1].circled=true;getBtn(v).classList.add("circled");updateUI();}
-function unCircle(v){state.numbers[v-1].circled=false;getBtn(v).classList.remove("circled");}
-function erase(v){state.numbers[v-1].erased=true;getBtn(v).classList.add("erased");}
-function getBtn(v){return board.querySelector(`[data-v="${v}"]`);}
-function next(){
-  state.player++;if(state.player>state.count)state.player=1;
-  const moves=validMoves(state.current);
-  if(!moves.length){
-    const loser=state.player,winner=loser===1?state.count:loser-1;
-    log(`No moves for Player ${loser}. Player ${winner} wins!`);
-    turn.textContent=`Player ${winner} wins! 🎉`;
-    board.querySelectorAll(".cell").forEach(b=>b.disabled=true);
-    return;
-  }updateUI();
+
+function botTurn(){
+  if(state.current===null) return; // bot never starts
+  const from = state.current; const valids = validMoves(from); if(!valids.length) return;
+  // Simple tactic: if any move leaves opponent with no moves, take it; else smallest.
+  let pick=null;
+  for(const v of valids){
+    state.numbers[from-1].erased=true;
+    state.numbers[from-1].circled=false;
+    state.numbers[v-1].circled=true;
+    const nm = validMoves(v);
+    state.numbers[from-1].erased=false;
+    state.numbers[v-1].circled=false;
+    if(nm.length===0){ pick=v; break; }
+  }
+  if(pick==null) pick=valids[0];
+  onClick(pick);
 }
-function log(m){const li=document.createElement("li");li.textContent=m;logList.appendChild(li);}
-btn.onclick=newGame;sel.onchange=newGame;newGame();
+
+newGameBtn.addEventListener("click", newGame);
+modeSelect.addEventListener("change", newGame);
+newGame();

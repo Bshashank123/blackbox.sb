@@ -2,62 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blackboard Game (3 Players)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="app-header">
-    <h1>Blackboard Game</h1>
-    <p class="tagline">Numbers 1–100 • First move must be an <strong>even</strong> number • Then move by ×prime or ÷prime</p>
+  <header class="header">
+    <h1>🧮 Blackboard Game</h1>
+    <p>Pick numbers 1–100 • Start with an even number • Then move by × or ÷ a prime</p>
   </header>
 
-  <main class="app-main">
-    <section class="controls">
-      <div class="mode">
-        <label for="playerCountSelect">Players:</label>
-        <select id="playerCountSelect">
-          <option value="2">2 Players</option>
-          <option value="3" selected>3 Players</option>
-        </select>
-      </div>
+  <section class="controls">
+    <label>Players:
+      <select id="playerCountSelect">
+        <option value="2">2 Players</option>
+        <option value="3" selected>3 Players</option>
+      </select>
+    </label>
+    <button id="newGameBtn">🔁 New Game</button>
+  </section>
 
-      <div class="turn">
-        <span id="turnBadge" class="badge">Player 1’s turn</span>
-        <span id="circledInfo" class="circled">No number circled yet</span>
-      </div>
+  <section class="status-bar">
+    <span id="turnBadge">Player 1’s turn</span>
+    <span id="circledInfo">No number circled yet</span>
+  </section>
 
-      <div class="buttons">
-        <button id="newGameBtn" class="btn primary">New Game</button>
-        <button id="showRulesBtn" class="btn">Rules</button>
-      </div>
-    </section>
+  <main class="container">
+    <div id="board" class="board"></div>
 
-    <section id="board" class="board"></section>
-
-    <section class="panel">
-      <details id="rulesBox">
-        <summary>Game Rules</summary>
+    <aside class="panel">
+      <details open>
+        <summary>📜 Rules</summary>
         <ol>
           <li>Numbers 1–100 are on the board.</li>
-          <li><strong>Player 1</strong> must start by selecting an <strong>even</strong> number.</li>
-          <li>Next moves = multiply or divide the current number by a prime (result must still be 1–100 and available).</li>
-          <li>The previously circled number is erased each turn.</li>
-          <li>If a player cannot move, they lose — the previous player wins!</li>
+          <li>Player 1 starts by choosing an <strong>even number</strong>.</li>
+          <li>Next moves = current number × prime or ÷ prime (integer ≤ 100).</li>
+          <li>Previous circled number is erased each turn.</li>
+          <li>If a player has no valid move → they lose.</li>
         </ol>
       </details>
 
       <div class="log">
         <h3>Move Log</h3>
-        <ol id="logList" class="log-list"></ol>
+        <ol id="logList"></ol>
       </div>
-    </section>
+    </aside>
   </main>
 
-  <footer class="app-footer">
-    <small>3-Player version • Fully client-side • No dependencies</small>
-  </footer>
-
+  <footer class="footer">3-Player Version • No dependencies</footer>
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,39 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🎮 Game Hub</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header class="header">
-  <h1>🎮 Game Hub</h1>
-  <p class="tagline">Play classic and logic games — anywhere!</p>
+<header class="header gradient">
+  <h1 class="brand"><span class="logo">🧩</span> Game Hub</h1>
+  <p class="tagline">Play logic & board games — optimized for mobile & desktop</p>
 </header>
 
-<main class="hub">
-  <div class="game-card" onclick="location.href='blackboard.html'">
-    <h2>🧮 Blackboard Game</h2>
-    <p>Multiply or divide by primes. Supports <strong>2–3 Players + Bot</strong>.</p>
-    <button>Play Now</button>
-  </div>
+<main class="hub grid-cards">
+  <article class="game-card" onclick="location.href='blackboard.html'">
+    <div class="card-icon">🧮</div>
+    <h2>Blackboard Game</h2>
+    <p>× or ÷ by primes • <b>2–3 Players</b> • <b>Bot</b> mode</p>
+    <button>Play</button>
+  </article>
 
-  <div class="game-card" onclick="location.href='connect4.html'">
-    <h2>🔴 Connect 4</h2>
-    <p>Get 4 in a row! Play with Friends (2 or 3 players) or vs Bot.</p>
-    <button>Play Now</button>
-  </div>
+  <article class="game-card" onclick="location.href='connect4.html'">
+    <div class="card-icon">🔴</div>
+    <h2>Connect 4</h2>
+    <p><b>2 or 3 players</b> • Vs <b>Bot</b> • Get 4 in a row</p>
+    <button>Play</button>
+  </article>
 
-  <div class="game-card coming-soon">
-    <h2>🕹️ Coming Soon</h2>
-    <p>More games are on the way!</p>
-    <button disabled>Locked</button>
-  </div>
+  <article class="game-card" onclick="location.href='chess.html'">
+    <div class="card-icon">♟️</div>
+    <h2>Chess</h2>
+    <p>Full legal moves • <b>Castling</b> • Auto-promotion to Queen</p>
+    <button>Play</button>
+  </article>
 </main>
 
 <footer class="footer">
-  <small>© 2025 Game Hub | Made for Fun on Any Device 📱💻</small>
+  <small>© 2025 Game Hub • Same sleek UI across games • Works offline</small>
 </footer>
 </body>
 </html>

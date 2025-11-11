@@ -2,18 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chess</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Extra highlights and layout for history / buttons */
-    .toolbar{display:flex;justify-content:center;gap:8px;padding:10px;background:#14161f;border-bottom:1px solid #222;}
-    .toolbar button{background:#222637;color:#fff;border:1px solid #2a3046;border-radius:8px;padding:6px 10px;cursor:pointer}
-    .toolbar button:disabled{opacity:.4;cursor:not-allowed}
-    .capture-highlight{outline:3px solid rgba(255,80,80,.55)!important;box-shadow:0 0 6px rgba(255,80,80,.6)!important}
-    .history{background:var(--panel);border:1px solid #2a3046;border-radius:12px;padding:10px;max-height:260px;overflow:auto;margin:12px auto;width:min(92%,400px)}
-    .history h3{margin-bottom:6px;text-align:center}
-    .history ol{padding-left:22px;color:#d0d3dc}
+    /* --- Extra layout and highlights --- */
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      background: #14161f;
+      border-bottom: 1px solid #222;
+      flex-wrap: wrap;
+    }
+    .toolbar button {
+      background: #222637;
+      color: #fff;
+      border: 1px solid #2a3046;
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .toolbar button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .capture-highlight {
+      outline: 3px solid rgba(255, 80, 80, 0.55) !important;
+      box-shadow: 0 0 6px rgba(255, 80, 80, 0.6) !important;
+    }
+    .history {
+      background: var(--panel);
+      border: 1px solid #2a3046;
+      border-radius: 12px;
+      padding: 10px;
+      max-height: 260px;
+      overflow: auto;
+      margin: 12px auto;
+      width: min(92%, 400px);
+    }
+    .history h3 {
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .history ol {
+      padding-left: 22px;
+      color: #d0d3dc;
+    }
   </style>
 </head>
 <body>
@@ -25,6 +61,7 @@
 <section class="toolbar">
   <button id="undoBtn">⏪ Undo</button>
   <button id="redoBtn">⏩ Redo</button>
+  <button id="flipBtn">🔄 Flip Board</button>
 </section>
 
 <section class="status-bar">
@@ -41,7 +78,9 @@
   <ol id="moveList"></ol>
 </div>
 
-<footer class="footer">Chess • Undo / Redo • Captures highlight red • Castling supported</footer>
+<footer class="footer">
+  Chess • Undo / Redo • Captures red • Castling • Flip Board
+</footer>
 <script src="chess.js"></script>
 </body>
 </html>

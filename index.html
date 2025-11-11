@@ -1,33 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Hub</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header class="header">
-    <h1>🎮 Game Hub</h1>
-    <p>Select a game to play</p>
-  </header>
+<main class="hub">
+  <div class="game-card" onclick="location.href='blackboard.html'">
+    <h2>🧮 Blackboard Game</h2>
+    <p>Multiply or divide by primes. Supports 2–3 players & bot mode.</p>
+    <button>Play Now</button>
+  </div>
 
-  <main class="hub">
-    <div class="game-card" onclick="location.href='blackboard.html'">
-      <h2>🧮 Blackboard Game</h2>
-      <p>Circle numbers by multiplying or dividing by primes. Supports 2–3 players.</p>
-      <button>Play Now</button>
-    </div>
+  <div class="game-card" onclick="location.href='connect4.html'">
+    <h2>🔴 Connect 4</h2>
+    <p>Get 4 in a row! 2-Player or vs Bot mode.</p>
+    <button>Play Now</button>
+  </div>
 
-    <!-- Example for adding another game -->
-    <div class="game-card coming-soon">
-      <h2>🕹️ Coming Soon</h2>
-      <p>New games will appear here!</p>
-    </div>
-  </main>
-
-  <footer class="footer">
-    <small>© 2025 Game Hub | Made by You</small>
-  </footer>
-</body>
-</html>
+  <div class="game-card coming-soon">
+    <h2>🕹️ Coming Soon</h2>
+    <p>New games will appear here!</p>
+  </div>
+</main>

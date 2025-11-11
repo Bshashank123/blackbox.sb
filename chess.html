@@ -9,6 +9,8 @@
     :root {
       --panel: #171923;
       --muted: #a7adbb;
+      --light-square: #dbe3c1; /* ✅ Chess.com light */
+      --dark-square: #54744f;  /* ✅ Chess.com dark */
     }
 
     body {
@@ -139,7 +141,7 @@
       overflow-y: auto;
     }
 
-    /* 🎨 Classic Chess.com Board Colors */
+    /* 🎨 Authentic Chess.com Board Colors + Mobile Fix */
     .chess-wrap {
       display: flex;
       justify-content: center;
@@ -160,7 +162,7 @@
       box-shadow: 0 0 15px rgba(0,0,0,0.7);
       user-select: none;
       font-size: calc(min(90vw, 480px) / 8 * 0.8);
-      max-height: 90vh; /* Prevent cutoff */
+      max-height: 90vh; /* Prevent cutoff on phones */
     }
 
     .square {
@@ -171,17 +173,15 @@
       color: #fff;
     }
 
-    /* ✅ Classic board theme colors */
     .square.light {
-      background: #eeeed2; /* light beige */
+      background: var(--light-square);
     }
 
     .square.dark {
-      background: #769656; /* forest green */
+      background: var(--dark-square);
     }
 
     .square:hover { filter: brightness(1.1); }
-
     .square.highlight { box-shadow: inset 0 0 0 3px rgba(0,255,100,0.6); }
     .square.capture-highlight { box-shadow: inset 0 0 0 3px rgba(255,80,80,0.8); }
     .square.selected { box-shadow: 0 0 15px rgba(80,255,120,0.8); }
@@ -189,11 +189,11 @@
     /* ♟ Piece visibility fix */
     .square[title^="b"] {
       color: #000;
-      text-shadow: 0 0 3px #fff, 0 0 6px rgba(255,255,255,0.3);
+      text-shadow: 0 0 2px #fff, 0 0 5px rgba(255,255,255,0.3);
     }
 
     .square[title^="w"] {
-      color: #fefefe;
+      color: #fdfdfd;
       text-shadow: 0 0 2px #000, 0 0 5px rgba(0,0,0,0.4);
     }
 
@@ -289,7 +289,7 @@
     </div>
   </main>
 
-  <footer>♟ Chess • Fully Responsive • No Cutoff • Classic Colors • Works on All Devices</footer>
+  <footer>♟ Chess • Authentic Chess.com Theme • Fully Responsive • Clean & Stable UI</footer>
 
   <script src="chess.js"></script>
 </body>

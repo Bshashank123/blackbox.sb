@@ -7,30 +7,31 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="header">
-    <h1>🔴 Connect 4</h1>
-    <button class="back-btn" onclick="location.href='index.html'">← Back to Hub</button>
-  </header>
+<header class="header">
+  <h1>🔴 Connect 4</h1>
+  <button class="back-btn" onclick="location.href='index.html'">← Back</button>
+</header>
 
-  <section class="controls">
-    <label>Mode:
-      <select id="modeSelect">
-        <option value="pvp">2 Players</option>
-        <option value="bot" selected>Vs Bot</option>
-      </select>
-    </label>
-    <button id="newGameBtn">🔁 New Game</button>
-  </section>
+<section class="controls">
+  <label>Mode:
+    <select id="modeSelect">
+      <option value="pvp2">2 Players</option>
+      <option value="pvp3">3 Players</option>
+      <option value="bot" selected>Vs Bot</option>
+    </select>
+  </label>
+  <button id="newGameBtn">🔁 New Game</button>
+</section>
 
-  <section class="status-bar">
-    <span id="turnBadge">Player 1’s Turn (🔴)</span>
-  </section>
+<section class="status-bar">
+  <span id="turnBadge">Player 1’s turn (🔴)</span>
+</section>
 
-  <main class="connect-container">
-    <div id="connectBoard" class="connect-board"></div>
-  </main>
+<main class="connect-container">
+  <div id="connectBoard" class="connect-board"></div>
+</main>
 
-  <footer class="footer">Connect 4 • 2-Player & Bot mode</footer>
-  <script src="connect4.js"></script>
+<footer class="footer">Connect 4 • 2–3 Players + Bot Mode</footer>
+<script src="connect4.js"></script>
 </body>
 </html>

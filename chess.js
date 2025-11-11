@@ -30,12 +30,17 @@ function newGame() {
     ['wP','wP','wP','wP','wP','wP','wP','wP'],
     ['wR','wN','wB','wQ','wK','wB','wN','wR']
   ];
-  turn = 'w'; selected = null; legalTargets = [];
-  lostWhite = []; lostBlack = [];
-  history = []; future = [];
+  turn = 'w';
+  selected = null;
+  legalTargets = [];
+  lostWhite = [];
+  lostBlack = [];
+  history = [];
+  future = [];
   render();
 }
 
+/* Render board */
 function render() {
   boardEl.innerHTML = '';
   const ranks = flipped ? [...Array(8).keys()] : [...Array(8).keys()].reverse();
@@ -45,16 +50,20 @@ function render() {
     for (const c of files) {
       const sq = document.createElement('div');
       sq.className = 'square ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
-      sq.dataset.r = r; sq.dataset.c = c;
+      sq.dataset.r = r;
+      sq.dataset.c = c;
 
       const piece = board[r][c];
       if (piece) {
         sq.textContent = glyph[piece];
-        sq.title = piece; // used to brighten black pieces
+        sq.style.color = piece[0] === 'w' ? '#f8f8ff' : '#111';
+        sq.style.textShadow = piece[0] === 'b'
+          ? '0 0 4px #fff8, 0 0 8px rgba(255,255,255,0.1)'
+          : '0 0 6px rgba(255,255,255,0.4)';
       }
 
       if (selected && selected.r === r && selected.c === c)
-        sq.classList.add('selected');
+        sq.classList.add('selected'); // soft green glow
 
       const target = legalTargets.find(t => t.r === r && t.c === c);
       if (target) {
@@ -68,17 +77,20 @@ function render() {
     }
   }
 
+  // Turn indicator
   const colorName = turn === 'w' ? 'White' : 'Black';
   turnBadge.textContent = colorName + ' to move';
   turnBadge.className = 'turn-indicator ' + (turn === 'w' ? 'turn-white' : 'turn-black');
 
+  // Update captures
   lostWhiteEl.innerHTML = lostWhite.map(x => glyph[x]).join(' ');
   lostBlackEl.innerHTML = lostBlack.map(x => glyph[x]).join(' ');
 }
 
-/* ----------------- Movement Logic ----------------- */
+/* Click handler */
 function onSquareClick(e) {
-  const r = +e.currentTarget.dataset.r, c = +e.currentTarget.dataset.c;
+  const r = +e.currentTarget.dataset.r;
+  const c = +e.currentTarget.dataset.c;
   const piece = board[r][c];
   const target = legalTargets.find(t => t.r === r && t.c === c);
 
@@ -101,48 +113,65 @@ function onSquareClick(e) {
   }
 }
 
+/* Generate moves (simple rules) */
 function generateMoves(r, c) {
-  const p = board[r][c]; if (!p) return [];
-  const color = p[0], type = p[1];
+  const p = board[r][c];
+  if (!p) return [];
+  const color = p[0];
+  const type = p[1];
   const M = [];
+
   const add = (rr, cc) => { if (onBoard(rr, cc) && !friendly(rr, cc, color)) M.push({ r: rr, c: cc }); };
   const slide = dirs => { for (const [dr, dc] of dirs) {
     let rr = r + dr, cc = c + dc;
     while (onBoard(rr, cc) && !friendly(rr, cc, color)) {
-      M.push({ r: rr, c: cc }); if (board[rr][cc]) break; rr += dr; cc += dc;
-    }}};
+      M.push({ r: rr, c: cc });
+      if (board[rr][cc]) break;
+      rr += dr; cc += dc;
+    }
+  }};
 
   if (type === 'P') {
-    const dir = color === 'w' ? -1 : 1, start = color === 'w' ? 6 : 1;
+    const dir = color === 'w' ? -1 : 1;
+    const start = color === 'w' ? 6 : 1;
     if (!board[r + dir][c]) add(r + dir, c);
     if (r === start && !board[r + dir][c] && !board[r + 2 * dir][c]) add(r + 2 * dir, c);
-    for (const dc of [-1, 1]) if (onBoard(r + dir, c + dc) && enemy(r + dir, c + dc, color)) add(r + dir, c + dc);
+    for (const dc of [-1, 1])
+      if (onBoard(r + dir, c + dc) && enemy(r + dir, c + dc, color)) add(r + dir, c + dc);
   }
-  if (type === 'N') [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(([dr,dc])=>add(r+dr,c+dc));
+
+  if (type === 'N') [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
+    .forEach(([dr,dc]) => add(r+dr,c+dc));
   if (type === 'B') slide([[1,1],[1,-1],[-1,1],[-1,-1]]);
   if (type === 'R') slide([[1,0],[-1,0],[0,1],[0,-1]]);
   if (type === 'Q') slide([[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]);
   if (type === 'K') for (const dr of [-1,0,1]) for (const dc of [-1,0,1]) if (dr||dc) add(r+dr,c+dc);
+
   return M;
 }
 
-function onBoard(r,c){return r>=0&&r<8&&c>=0&&c<8;}
-function friendly(r,c,color){return board[r][c]&&board[r][c][0]===color;}
-function enemy(r,c,color){return board[r][c]&&board[r][c][0]!==color;}
+/* Helpers */
+function onBoard(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+function friendly(r, c, color) { return board[r][c] && board[r][c][0] === color; }
+function enemy(r, c, color) { return board[r][c] && board[r][c][0] !== color; }
 
-function makeMove(r1,c1,r2,c2) {
-  const piece = board[r1][c1], captured = board[r2][c2];
+/* Perform move */
+function makeMove(r1, c1, r2, c2) {
+  const piece = board[r1][c1];
+  const captured = board[r2][c2];
+
   if (captured) {
     if (captured[0] === 'w') lostWhite.push(captured);
     else lostBlack.push(captured);
   }
 
-  const snapshot = JSON.parse(JSON.stringify(board));
-  history.push(snapshot); future = [];
+  history.push(JSON.parse(JSON.stringify(board)));
+  future = [];
+
   board[r2][c2] = piece;
   board[r1][c1] = null;
 
-  // promotion
+  // Promotion
   if (piece === 'wP' && r2 === 0) board[r2][c2] = 'wQ';
   if (piece === 'bP' && r2 === 7) board[r2][c2] = 'bQ';
 
@@ -164,17 +193,19 @@ undoBtn.onclick = () => {
   if (!history.length) return;
   const snap = history.pop();
   future.push(JSON.parse(JSON.stringify(board)));
-  board = snap; turn = turn === 'w' ? 'b' : 'w';
+  board = snap;
+  turn = turn === 'w' ? 'b' : 'w';
   render();
 };
 redoBtn.onclick = () => {
   if (!future.length) return;
   const snap = future.pop();
   history.push(JSON.parse(JSON.stringify(board)));
-  board = snap; turn = turn === 'w' ? 'b' : 'w';
+  board = snap;
+  turn = turn === 'w' ? 'b' : 'w';
   render();
 };
 flipBtn.onclick = () => { flipped = !flipped; render(); };
 newBtn.onclick = newGame;
 
-document.addEventListener('DOMContentLoaded', render);
+document.addEventListener('DOMContentLoaded', newGame);

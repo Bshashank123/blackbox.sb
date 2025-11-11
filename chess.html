@@ -6,48 +6,89 @@
   <title>Chess</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Toolbar with Turn Indicator */
+    :root {
+      --panel: #171923;
+      --muted: #a7adbb;
+    }
+
+    body {
+      background: #0f1115;
+      color: #fff;
+      font-family: system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 12px;
+      border-bottom: 1px solid #222;
+      position: relative;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 15px;
+      top: 15px;
+      background: #222637;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      filter: brightness(1.1);
+    }
+
+    /* Toolbar layout */
     .toolbar {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 16px;
-      padding: 14px;
+      gap: 10px;
+      padding: 12px;
       background: #14161f;
       border-bottom: 1px solid #222;
     }
+
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
     .toolbar button {
       background: linear-gradient(145deg, #222637, #181b28);
       color: #fff;
       border: 1px solid #2a3046;
-      border-radius: 12px;
-      padding: 12px 24px;
+      border-radius: 10px;
+      padding: 10px 20px;
       font-size: 1rem;
-      cursor: pointer;
-      transition: 0.25s;
       font-weight: 600;
-      min-width: 110px;
+      cursor: pointer;
+      transition: 0.2s;
     }
+
     .toolbar button:hover {
       filter: brightness(1.15);
       transform: translateY(-2px);
-      box-shadow: 0 0 10px rgba(100, 255, 100, 0.25);
     }
-    .toolbar button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Turn Indicator inside toolbar */
     .turn-indicator {
       background: #222637;
-      padding: 10px 26px;
+      padding: 8px 20px;
       border-radius: 30px;
       color: #fff;
       font-weight: 600;
       font-size: 1rem;
       text-align: center;
-      transition: 0.3s;
-      box-shadow: 0 0 15px rgba(255,255,255,0.05);
+      min-width: 130px;
     }
+
     .turn-white { box-shadow: 0 0 12px rgba(255,255,255,0.6); }
     .turn-black { box-shadow: 0 0 12px rgba(0,0,0,0.8); background: #111318; }
 
@@ -56,7 +97,7 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      gap: 24px;
+      gap: 20px;
       padding: 20px;
       flex-wrap: wrap;
     }
@@ -65,7 +106,7 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-      width: 200px;
+      width: 180px;
     }
 
     .capture-panel, .moves-panel {
@@ -75,19 +116,21 @@
       padding: 10px;
       color: #e0e3ea;
     }
+
     .capture-panel h3, .moves-panel h3 {
       text-align: center;
-      font-size: 15px;
+      font-size: 14px;
       color: var(--muted);
       margin-bottom: 6px;
       text-transform: uppercase;
-      letter-spacing: 1px;
     }
+
     .capture-panel div {
       text-align: center;
       font-size: 22px;
       min-height: 30px;
     }
+
     .moves-panel ol {
       padding-left: 20px;
       font-size: 15px;
@@ -98,81 +141,128 @@
     /* Chess Board */
     .chess-board {
       display: grid;
-      grid-template-columns: repeat(8, minmax(55px, 8vw));
-      grid-template-rows: repeat(8, minmax(55px, 8vw));
+      grid-template-columns: repeat(8, 1fr);
+      aspect-ratio: 1 / 1;
+      width: min(95vw, 480px);
+      max-width: 480px;
       border: 4px solid #2a3046;
       border-radius: 12px;
       box-shadow: 0 0 15px rgba(0,0,0,0.7);
       user-select: none;
-      font-size: clamp(32px, 6vw, 56px);
+      font-size: calc(min(95vw, 480px) / 8 * 0.8);
     }
 
     .square {
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: 0.1s;
       color: #fff;
+      transition: 0.1s;
     }
-    .square.light { background: #769656; }
-    .square.dark { background: #4a7039; }
+
+    .square.light { background: #baca44; }
+    .square.dark { background: #769656; }
+
     .square:hover { filter: brightness(1.1); }
+
     .square.highlight { box-shadow: inset 0 0 0 3px rgba(0,255,100,0.6); }
     .square.capture-highlight { box-shadow: inset 0 0 0 3px rgba(255,80,80,0.8); }
     .square.selected { box-shadow: 0 0 15px rgba(80,255,120,0.8); }
-    .square[title^="b"] { filter: brightness(1.4) contrast(1.1); color: #111; }
 
-    @media (max-width: 950px) {
-      .game-layout { flex-direction: column; align-items: center; }
-      .sidebar-left, .sidebar-right { flex-direction: row; width: auto; gap: 10px; }
-      .moves-panel { max-height: 200px; }
+    .square[title^="b"] {
+      color: #000;
+      text-shadow: 0 0 2px #fff, 0 0 3px rgba(255,255,255,0.6);
+    }
+
+    /* Responsive layout fix */
+    @media (max-width: 900px) {
+      .toolbar {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .game-layout {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .sidebar-left, .sidebar-right {
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        max-width: 95vw;
+      }
+
+      .moves-panel {
+        max-height: 200px;
+        width: 100%;
+      }
+
+      .capture-panel {
+        flex: 1;
+        text-align: center;
+      }
+
+      footer {
+        font-size: 12px;
+      }
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      color: #888;
+      border-top: 1px solid #222;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-<header class="header">
-  <button class="back-btn" onclick="location.href='index.html'">← Back</button>
-  <h1>Chess</h1>
-</header>
+  <header class="header">
+    <button class="back-btn" onclick="location.href='index.html'">← Back</button>
+    <h1>Chess</h1>
+  </header>
 
-<!-- Unified toolbar -->
-<section class="toolbar">
-  <button id="undoBtn">⏪ Undo</button>
-  <button id="redoBtn">⏩ Redo</button>
-  <button id="flipBtn">🔄 Flip Board</button>
-  <button id="newBtn">♻️ New Game</button>
-  <span id="turnBadge" class="turn-indicator turn-white">White to move</span>
-</section>
+  <section class="toolbar">
+    <div class="toolbar-group">
+      <button id="undoBtn">⏪ Undo</button>
+      <button id="redoBtn">⏩ Redo</button>
+    </div>
+    <span id="turnBadge" class="turn-indicator turn-white">White to move</span>
+    <div class="toolbar-group">
+      <button id="flipBtn">🔄 Flip Board</button>
+      <button id="newBtn">♻️ New Game</button>
+    </div>
+  </section>
 
-<main class="game-layout">
-  <!-- Left Sidebar (captures) -->
-  <div class="sidebar-left">
-    <div class="capture-panel">
-      <h3>Black Captures</h3>
-      <div id="lostBlack"></div>
+  <main class="game-layout">
+    <div class="sidebar-left">
+      <div class="capture-panel">
+        <h3>Black Captures</h3>
+        <div id="lostBlack"></div>
+      </div>
+
+      <div class="capture-panel">
+        <h3>White Captures</h3>
+        <div id="lostWhite"></div>
+      </div>
     </div>
 
-    <div class="capture-panel">
-      <h3>White Captures</h3>
-      <div id="lostWhite"></div>
+    <div class="chess-wrap">
+      <div id="board" class="chess-board"></div>
     </div>
-  </div>
 
-  <!-- Chess Board -->
-  <div class="chess-wrap" style="justify-content:center;">
-    <div id="board" class="chess-board"></div>
-  </div>
-
-  <!-- Right Sidebar (moves) -->
-  <div class="sidebar-right">
-    <div class="moves-panel">
-      <h3>Move List</h3>
-      <ol id="moveList"></ol>
+    <div class="sidebar-right">
+      <div class="moves-panel">
+        <h3>Move List</h3>
+        <ol id="moveList"></ol>
+      </div>
     </div>
-  </div>
-</main>
+  </main>
 
-<footer class="footer">♟ Chess • Chess.com Inspired • Responsive Layout • Turn Indicator on Top</footer>
-<script src="chess.js"></script>
+  <footer>♟ Chess • Fully Responsive • Mobile-Friendly • Improved Visibility</footer>
+
+  <script src="chess.js"></script>
 </body>
 </html>

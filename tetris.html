@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Tetris</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  .stage {display:flex;gap:16px;justify-content:center;align-items:flex-start;padding:16px}
+  .panel {background:var(--panel,#171923);border:1px solid #2a3046;border-radius:12px;padding:12px;color:#e7eaf0}
+  #tCanvas{background:#0c0f12;border:4px solid #2a3046;border-radius:12px;box-shadow:0 0 15px rgba(0,0,0,.6)}
+  .stats{min-width:180px}
+  .btn {background:#222637;border:1px solid #2a3046;border-radius:10px;color:#fff;padding:8px 12px;cursor:pointer}
+  .grid {display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .key {background:#222637;border:1px solid #2a3046;border-radius:8px;padding:6px 8px;text-align:center;font-size:12px}
+  @media(max-width:900px){.stage{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+<header class="header">
+  <button class="back-btn" onclick="location.href='index.html'">← Back</button>
+  <h1>Tetris</h1>
+</header>
+
+<div class="stage">
+  <canvas id="tCanvas" width="300" height="600"></canvas>
+  <aside class="panel stats">
+    <h3 style="margin:0 0 8px">Status</h3>
+    <div>Score: <b id="tScore">0</b></div>
+    <div>Lines: <b id="tLines">0</b></div>
+    <div>Level: <b id="tLevel">1</b></div>
+    <div style="margin-top:10px">Next:</div>
+    <canvas id="tNext" width="80" height="80" style="background:#0c0f12;border:2px solid #2a3046;border-radius:10px"></canvas>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="tNew">New Game</button>
+      <button class="btn" id="tPause">Pause</button>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <h4 style="margin:0 0 6px">Controls</h4>
+      <div class="grid">
+        <div class="key">← / A</div><div style="grid-column:span 3">Move left</div>
+        <div class="key">→ / D</div><div style="grid-column:span 3">Move right</div>
+        <div class="key">↓ / S</div><div style="grid-column:span 3">Soft drop</div>
+        <div class="key">↑ / W / X</div><div style="grid-column:span 3">Rotate</div>
+        <div class="key">Space</div><div style="grid-column:span 3">Hard drop</div>
+        <div class="key">P</div><div style="grid-column:span 3">Pause</div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<footer class="footer">Tetris • Keyboard + Mobile-friendly</footer>
+<script src="tetris.js"></script>
+</body>
+</html>

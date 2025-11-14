@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Match Cards</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  .wrap{display:flex;gap:16px;justify-content:center;align-items:flex-start;padding:16px;flex-wrap:wrap}
+  .panel{background:var(--panel,#171923);border:1px solid #2a3046;border-radius:12px;padding:12px;color:#e7eaf0;min-width:200px}
+  .board{display:grid;gap:10px;background:#0f1218;border-radius:12px;padding:12px;border:1px solid #2a3046}
+  .card{
+    width:80px;height:100px;border-radius:12px;display:flex;justify-content:center;align-items:center;
+    background:#222637;border:1px solid #2a3046;color:#fff;font-size:34px;cursor:pointer;transform-style:preserve-3d;transition:.3s
+  }
+  .card.flipped{background:#2f344c}
+  .card.matched{background:#2e7242;border-color:#3ca45a}
+  .ctrl{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{background:#222637;border:1px solid #2a3046;border-radius:10px;color:#fff;padding:8px 12px;cursor:pointer}
+  @media(max-width:900px){.board{justify-content:center}}
+</style>
+</head>
+<body>
+<header class="header">
+  <button class="back-btn" onclick="location.href='index.html'">← Back</button>
+  <h1>Match Cards</h1>
+</header>
+
+<div class="wrap">
+  <div class="panel" style="text-align:center">
+    <div>Moves: <b id="mMoves">0</b></div>
+    <div>Matches: <b id="mPairs">0</b></div>
+    <div>Time: <b id="mTime">0s</b></div>
+    <div class="ctrl" style="margin-top:10px">
+      <button class="btn" id="mNew">New Game</button>
+      <select class="btn" id="mSize">
+        <option value="4x4" selected>4 × 4</option>
+        <option value="6x4">6 × 4</option>
+      </select>
+    </div>
+  </div>
+
+  <main class="board" id="mBoard" style="grid-template-columns:repeat(4,80px)"></main>
+</div>
+
+<footer class="footer">Memory • 4×4 / 6×4 • Emojis</footer>
+<script src="match.js"></script>
+</body>
+</html>

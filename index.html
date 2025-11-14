@@ -1,152 +1,110 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Hub</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    /* Extra polish for Game Hub */
-    body {
-      background: #0f1115;
-      color: #e7eaf0;
-      font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header.header {
-      text-align: center;
-      padding: 24px 12px;
-      border-bottom: 1px solid #222;
-    }
-
-    .hub {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 24px;
-      padding: 40px 24px;
-      flex: 1;
-      justify-items: center;
-    }
-
-    .game-card {
-      background: #171923;
-      border: 1px solid #2a3046;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 320px;
-      text-align: center;
-      padding: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      transition: 0.25s ease-in-out;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .game-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 0 20px rgba(106,166,255,0.25);
-    }
-
-    .game-card h2 {
-      color: #6aa6ff;
-      margin-bottom: 10px;
-      font-size: 1.4rem;
-    }
-
-    .game-card p {
-      color: #a7adbb;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      margin-bottom: 16px;
-    }
-
-    .game-card button {
-      background: #6aa6ff;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 18px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .game-card button:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
-    }
-
-    .footer {
-      text-align: center;
-      padding: 14px;
-      color: #a7adbb;
-      border-top: 1px solid #222;
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 700px) {
-      .game-card h2 { font-size: 1.2rem; }
-      .game-card p { font-size: 0.9rem; }
-      .hub { padding: 24px 12px; gap: 18px; }
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Game Hub</title>
+<link rel="stylesheet" href="style.css">
+<style>
+:root{
+  --bg:#0f1115;--panel:#171923;--muted:#a7adbb;--accent:#6aa6ff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:#e7eaf0}
+.header{
+  display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #222;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo{width:48px;height:40px;border-radius:8px;background:linear-gradient(135deg,#6aa6ff,#5ee7ff);display:flex;align-items:center;justify-content:center;font-weight:900;color:#042}
+nav.topnav{display:flex;align-items:center;gap:12px}
+.menu{position:relative}
+.btn{background:linear-gradient(145deg,#222637,#181b28);color:#fff;border:1px solid #2a3046;padding:8px 12px;border-radius:10px;cursor:pointer}
+.dropdown{position:absolute;left:0;top:46px;background:var(--panel);border:1px solid #2a3046;padding:8px;border-radius:10px;display:none;min-width:180px;z-index:40}
+.menu:hover .dropdown{display:block}
+.dropdown a{display:block;color:#e7eaf0;padding:8px;border-radius:6px;text-decoration:none}
+.dropdown a:hover{background:#111425}
+.hub{padding:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.card{background:var(--panel);border:1px solid #2a3046;padding:18px;border-radius:14px;text-align:center;cursor:pointer;transition:all .18s}
+.card:hover{transform:translateY(-6px)}
+.card h3{margin:0;color:var(--accent)}
+.footer{text-align:center;padding:12px;border-top:1px solid #222;color:var(--muted)}
+@media(max-width:700px){.header{flex-direction:column;gap:10px}}
+</style>
 </head>
 <body>
-
   <header class="header">
-    <h1>🎮 Game Hub</h1>
-    <p>Choose a game and start playing!</p>
+    <div class="brand">
+      <div class="logo">GH</div>
+      <div>
+        <div style="font-weight:800">Game Hub</div>
+        <div style="font-size:12px;color:var(--muted)">All your games — Play & Share</div>
+      </div>
+    </div>
+
+    <nav class="topnav">
+      <div class="menu">
+        <button class="btn">All Games ▾</button>
+        <div class="dropdown">
+          <a href="index.html">Home</a>
+          <a href="blackboard.html">Blackboard</a>
+          <a href="chess.html">Chess</a>
+          <a href="tetris.html">Tetris</a>
+          <a href="snake.html">Snake</a>
+          <a href="match.html">Match Cards</a>
+          <a href="fire-water-canvas.html">Fire & Water</a>
+        </div>
+      </div>
+      <a class="btn" href="fire-water-canvas.html">Fire & Water</a>
+      <a class="btn" href="chess.html">Chess</a>
+      <a class="btn" href="tetris.html">Tetris</a>
+      <a class="btn" href="snake.html">Snake</a>
+      <a class="btn" href="match.html">Match Cards</a>
+      <a class="btn" href="#" id="settingsBtn">Settings</a>
+    </nav>
   </header>
 
   <main class="hub">
-
-    <!-- Blackboard Game -->
-    <div class="game-card" onclick="location.href='blackboard.html'">
-      <h2>🧮 Blackboard Game</h2>
-      <p>Circle numbers by multiplying or dividing by primes. Supports 2–3 players and bot mode.</p>
-      <button>Play Now</button>
+    <div class="card" onclick="location.href='fire-water-canvas.html'">
+      <h3>🔥 Fire & Water</h3>
+      <p>Canvas-based cooperative puzzle platformer — 15 levels</p>
+      <button class="btn">Play</button>
     </div>
 
-    <!-- Chess -->
-    <div class="game-card" onclick="location.href='chess.html'">
-      <h2>♟ Chess</h2>
-      <p>Play classic chess with move history, captures, undo/redo, and castling.</p>
-      <button>Play Now</button>
+    <div class="card" onclick="location.href='chess.html'">
+      <h3>♟ Chess</h3>
+      <p>Classic chess with move list, captures & undo/redo</p>
+      <button class="btn">Play</button>
     </div>
 
-    <!-- Tetris -->
-    <div class="game-card" onclick="location.href='tetris.html'">
-      <h2>🧱 Tetris</h2>
-      <p>Stack falling blocks to clear lines. Arrow keys to move, Space for hard drop.</p>
-      <button>Play Now</button>
+    <div class="card" onclick="location.href='tetris.html'">
+      <h3>🧱 Tetris</h3>
+      <p>10×20 blocks, lines, next preview</p>
+      <button class="btn">Play</button>
     </div>
 
-    <!-- Snake -->
-    <div class="game-card" onclick="location.href='snake.html'">
-      <h2>🐍 Snake</h2>
-      <p>Eat apples, grow longer, and don’t bite yourself! Works with touch and keyboard.</p>
-      <button>Play Now</button>
+    <div class="card" onclick="location.href='snake.html'">
+      <h3>🐍 Snake</h3>
+      <p>Eat apples, grow, avoid yourself</p>
+      <button class="btn">Play</button>
     </div>
 
-    <!-- Match Cards -->
-    <div class="game-card" onclick="location.href='match.html'">
-      <h2>🧠 Match Cards</h2>
-      <p>Flip cards to find matching pairs. Play 4×4 or 6×4 mode and test your memory!</p>
-      <button>Play Now</button>
+    <div class="card" onclick="location.href='match.html'">
+      <h3>🧠 Match Cards</h3>
+      <p>Memory pairs, 4×4 or 6×4</p>
+      <button class="btn">Play</button>
     </div>
 
+    <div class="card" onclick="location.href='blackboard.html'">
+      <h3>🧮 Blackboard</h3>
+      <p>Prime-based number game — multiplayer & bot</p>
+      <button class="btn">Play</button>
+    </div>
   </main>
 
-  <footer class="footer">
-    © 2025 Game Hub — Built with 💙 using HTML, CSS & JS
-  </footer>
+  <footer class="footer">© 2025 — Your Single-file Game Suite</footer>
 
+<script>
+document.getElementById('settingsBtn').addEventListener('click', ()=>alert('Settings: Sound, Fullscreen and Controls can be added.'));
+</script>
 </body>
 </html>

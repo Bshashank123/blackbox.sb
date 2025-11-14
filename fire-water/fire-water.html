@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Fire & Water — 15 Levels</title>
+<link rel="stylesheet" href="fire-water.css"/>
+</head>
+<body>
+
+<div class="header">
+  <h1>Fire & Water — 15 Levels</h1>
+  <div class="topbtns">
+    <button id="home" class="btn">Home</button>
+    <button id="save" class="btn">Save</button>
+    <button id="reset" class="btn">Reset</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="panel">
+    <canvas id="game" width="800" height="576"></canvas>
+
+    <div class="hud">
+      <div id="levelBadge" class="badge">Level 1/15</div>
+      <div id="timeBadge" class="badge">Time: 0</div>
+      <div id="livesBadge" class="badge">Lives: 3</div>
+      <div id="gemsBadge" class="badge">Gems: 0</div>
+    </div>
+
+    <div class="controls">
+      <button id="prev" class="btn">◀ Prev</button>
+      <button id="restart" class="btn">Restart</button>
+      <button id="next" class="btn">Next ▶</button>
+    </div>
+
+  </div>
+
+  <aside class="panel sidepanel">
+    <h3>Fireboy</h3>
+    <div>Key: <span id="kF">No</span></div>
+    <div>Door: <span id="dF">No</span></div>
+
+    <h3>Watergirl</h3>
+    <div>Key: <span id="kW">No</span></div>
+    <div>Door: <span id="dW">No</span></div>
+
+    <p>Mechanics: keys, doors, boxes, moving platforms, teleporters, gravity, gems</p>
+
+    <button id="hint" class="btn small">Hint</button>
+    <button id="mute" class="btn small">Mute</button>
+  </aside>
+
+</div>
+
+<script src="fire-water.js"></script>
+</body>
+</html>
